@@ -192,10 +192,13 @@ def to_connection( of, to):
 \draw [connection]  ("""+of+"""-east)    -- node {\midarrow} ("""+to+"""-west);
 """
 
-def to_skip( of, to, pos=1.25):
+def to_skip( of, to, pos_of=1.25, pos_to=1.25, pos=None):
+    if pos is not None:
+        pos_of = pos
+        pos_to = pos
     return r"""
-\path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
-\path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos) +"""] ("""+ to +"""-top) ;
+\path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos_of) +"""] ("""+ of +"""-top) ;
+\path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos_to) +"""] ("""+ to +"""-top) ;
 \draw [copyconnection]  ("""+of+"""-northeast)  
 -- node {\copymidarrow}("""+of+"""-top)
 -- node {\copymidarrow}("""+to+"""-top)
@@ -218,6 +221,19 @@ def to_generate( arch, pathname="file.tex" ):
         for c in arch:
             print(c)
             f.write( c )
-     
 
-
+# ReLu
+def to_ReLU(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=0.5, caption=" "):
+    return r"""
+\pic[shift={ """+ offset +""" }] at """+ to +""" 
+    {Box={
+        name="""+name+""",
+        caption="""+ caption +r""",
+        fill=\ConvReluColor,
+        opacity="""+ str(opacity) +""",
+        height="""+ str(height) +""",
+        width="""+ str(width) +""",
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
