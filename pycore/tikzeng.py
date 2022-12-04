@@ -19,15 +19,22 @@ def to_cor():
 \def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
 \def\FcColor{rgb:blue,5;red,2.5;white,5}
 \def\FcReluColor{rgb:blue,5;red,5;white,4}
-\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SoftmaxColor{rgb:magenta,5;black,7}
 \def\SumColor{rgb:blue,5;green,15}
 """
 
-def to_begin():
+def to_commands():
     return r"""
 \newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+"""
 
+def to_begin():
+    return to_commands() + r"""
 \begin{document}
+""" + to_begin_picture()
+
+def to_begin_picture():
+    return r"""
 \begin{tikzpicture}
 \tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
 \tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
@@ -194,9 +201,13 @@ def to_skip( of, to, pos=1.25):
 -- node {\copymidarrow} ("""+to+"""-north);
 """
 
-def to_end():
+def to_end_picture():
     return r"""
 \end{tikzpicture}
+"""
+
+def to_end():
+    return to_end_picture() + r"""
 \end{document}
 """
 
