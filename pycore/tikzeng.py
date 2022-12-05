@@ -28,9 +28,29 @@ def to_begin_picture():
 
 # layers definition
 
-def to_input( pathfile, to='(-3,0,0)', width=8, height=8, name="temp" ):
+def to_input( pathfile, to='(-2,0,0)', width=8, height=8, name="temp", xoffset="0"):
     return r"""
-\node[canvas is zy plane at x=0] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width)+"cm"+""",height="""+ str(height)+"cm"+"""]{"""+ pathfile +"""}};
+\node[canvas is zy plane at x="""+xoffset+"""] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width)+"cm"+""",height="""+ str(height)+"cm"+"""]{"""+ pathfile +"""}};
+"""
+
+def to_image(pathfile, to='(-3,0,0)', width=8, height=8, name="temp", xoffset="0"):
+    return to_input(pathfile, to, width, height, name, xoffset)
+
+# to box
+def to_box( name, s_filer="", n_filer="", offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" ", color="\\ConvColor"):
+    return r"""
+\pic[shift={"""+ offset +"""}] at """+ to +""" 
+    {Box={
+        name=""" + name +""",
+        caption="""+ caption +r""",
+        xlabel={{"""+ str(n_filer) +""", }},
+        zlabel="""+ str(s_filer) +""",
+        fill="""+str(color)+""",
+        height="""+ str(height) +""",
+        width="""+ str(width) +""",
+        depth="""+ str(depth) +"""
+        }
+    };
 """
 
 # Conv
@@ -49,6 +69,19 @@ def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", widt
         }
     };
 """
+
+
+# Batch normalization
+def to_bn( name, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+    return to_box(name, "", "", offset, to, width, height, depth, caption, color="\\BnColor")
+
+# Relu
+def to_relu( name, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+    return to_box(name, "", "", offset, to, width, height, depth, caption, color="\\ReluColor")
+
+# Pad
+def to_pad( name, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+    return to_box(name, "", "", offset, to, width, height, depth, caption, color="\\PadColor")
 
 # Conv,Conv,relu
 # Bottleneck
@@ -207,19 +240,3 @@ def to_generate( arch, pathname="file.tex" ):
         for c in arch:
             print(c)
             f.write( c )
-
-# ReLu
-def to_ReLU(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=0.5, caption=" "):
-    return r"""
-\pic[shift={ """+ offset +""" }] at """+ to +""" 
-    {Box={
-        name="""+name+""",
-        caption="""+ caption +r""",
-        fill=\ConvReluColor,
-        opacity="""+ str(opacity) +""",
-        height="""+ str(height) +""",
-        width="""+ str(width) +""",
-        depth="""+ str(depth) +"""
-        }
-    };
-"""
